@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yystorm.mapper.UserFollowsMapper">
+    <resultMap id="slectPageFollowMaps" type="com.yystorm.vo.UserFollowsVO">
+        <id property="id" column="uId"></id>
+        <result property="articleCount" column="articleCount"></result>
+        <result property="followCount" column="followed_userCount"></result>
+        <result property="isOther" column="is_other"></result>
+        <collection property="follow" column="followed_user" ofType="com.yystorm.entity.User">
+            <id column="id" property="id"></id>
+            <result property="username" column="username"></result>
+            <result property="userImg" column="user_img"></result>
+        </collection>
+    </resultMap>
+    <select id="slectPageMap" resultMap="slectPageFollowMaps">
+ SELECT
+	u.id AS uId,
+	`user`.id,
+	`user`.username,
+	`user`.user_img,
+	(
+	SELECT
+		count( id )
+	FROM
+		article
+	WHERE
+		u.followed_user = article.id
+	) AS articleCount,
+	(
+	SELECT
+		COUNT( id )
+	FROM
+		user_follows
+	WHERE
+		user_follows.followed_user = `user`.id
+	) AS followed_userCount
+FROM
+	user_follows AS u
+	LEFT JOIN `user` ON `user`.id = u.followed_user
+
+WHERE
+	u.user_id = #{id}
+	and `user`.is_delete=0
+    </select>
+	<select id="slectPageFanMap" resultMap="slectPageFollowMaps">
+SELECT u.id AS uId,
+`user`.id,
+`user`.username,
+`user`.user_img,
+(
+	SELECT
+		count( id )
+	FROM
+		article
+	WHERE
+		u.user_id = article.id
+	) AS articleCount,
+	(
+	SELECT
+		COUNT( id )
+	FROM
+		user_follows
+	WHERE
+		user_follows.followed_user = `user`.id
+	) AS followed_userCount,
+<!--	EXISTS(SELECT id FROM user_follows WHERE user_id=#{id} AND followed_user=`user`.id)  as is_other -->
+	(SELECT id FROM user_follows WHERE user_id=#{id} AND followed_user=`user`.id) as is_other
+FROM
+	user_follows AS u
+	LEFT JOIN `user` ON `user`.id = u.user_id
+WHERE
+	u.followed_user = #{id}
+	AND `user`.is_delete =0
+    </select>
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yystorm.mapper.ArticleMapper">
+    <resultMap id="queryForListMap" type="com.yystorm.vo.ArticleVO">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="click_nums" property="clickNums"/>
+        <result column="content" property="content"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="list_pic" property="listPic"/>
+
+        <collection property="user" ofType="user">
+            <id column="id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="user_img" property="userImg"/>
+            <result column="info" property="info"/>
+        </collection>
+        <collection property="category" column="category_id" ofType="com.yystorm.entity.ArticleCategory"
+                    select="com.yystorm.mapper.ArticleCategoryMapper.findById">
+            <!--  <id column="id" property="id" />
+              <result column="name" property="name" />-->
+        </collection>
+    </resultMap>
+    <select id="findAll" resultMap="queryForListMap">
+      SELECT
+	a.id AS aId,
+	a.title,
+	a.click_nums,
+	a.category_id,
+	a.collection,
+	a.content,
+	a.list_pic,
+	a.gmt_create,
+	a.user_id,
+	u.id,
+	u.user_img,
+	u.username
+FROM
+	article AS a
+	INNER JOIN `user` AS u ON a.user_id = u.id
+WHERE
+	a.is_show = 1
+		and
+	a.is_delete=0
+    </select>
+
+    <resultMap id="queryForListMaps" type="com.yystorm.vo.ArticleVO">
+        <id column="aId" property="id"/>
+        <result column="title" property="title"/>
+        <result column="click_nums" property="clickNums"/>
+        <result column="content" property="content"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="list_pic" property="listPic"/>
+        <result column="comment" property="articleCommentCount"/>
+        <result column="follow" property="followCount"/>
+        <result column="fan" property="fansCount"/>
+
+        <collection property="user" ofType="user">
+            <id column="id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="user_img" property="userImg"/>
+            <result column="info" property="info"/>
+        </collection>
+        <collection property="category" ofType="com.yystorm.entity.ArticleCategory">
+            <id column="cId" property="id"/>
+            <result column="name" property="name"/>
+        </collection>
+    </resultMap>
+
+    <select id="getCategoryListMapper" resultMap="queryForListMaps">
+              SELECT
+	a.id AS aId,
+	a.title,
+	a.click_nums,
+	a.category_id,
+	a.content,
+	a.list_pic,
+	a.gmt_create,
+	a.user_id,
+	u.id,
+	u.user_img,
+	u.username,
+	u.info,
+	c.id as cId,
+	c.name,
+	(select count(id) from article_comment where article_comment.article_id=a.id) as comment
+FROM
+	article AS a
+	INNER JOIN `user` AS u ON a.user_id = u.id
+	INNER JOIN `article_category` AS c ON a.category_id = c.id
+WHERE
+    a.category_id=#{id}
+    and
+	a.is_show = 1
+	and
+	a.is_delete=0
+    </select>
+
+    <select id="selectOneById" resultMap="queryForListMaps">
+              SELECT
+	a.id AS aId,
+	a.title,
+	a.click_nums,
+	a.category_id,
+	a.content,
+	a.list_pic,
+	a.gmt_create,
+	a.user_id,
+	u.id,
+	u.user_img,
+	u.username,
+	u.info,
+	c.id as cId,
+	c.name,
+	(select count(id) from user_follows where user_follows.user_id=u.id) as follow,
+		(select count(id) from user_follows where user_follows.followed_user=u.id) as fan
+FROM
+	article AS a
+	INNER JOIN `user` AS u ON a.user_id = u.id
+	INNER JOIN `article_category` AS c ON a.category_id = c.id
+WHERE
+    a.id=#{id}
+    and
+	a.is_show = 1
+	and
+	a.is_delete=0
+    </select>
+</mapper>

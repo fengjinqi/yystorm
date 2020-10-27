@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yystorm.mapper.UserMapper">
+    <select id="findAll" resultType="com.yystorm.entity.User">
+               select * from user where id=#{id}
+    </select>
+    <resultMap id="findAllArticleMap" type="com.yystorm.vo.ArticleVO">
+        <id column="aId" property="id"/>
+        <result column="title" property="title"/>
+        <result column="click_nums" property="clickNums"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="comment" property="articleCommentCount"/>
+        <collection property="category" ofType="com.yystorm.entity.ArticleCategory">
+            <id column="cId" property="id"/>
+            <result column="name" property="name"/>
+        </collection>
+
+    </resultMap>
+    <select id="findAllArticle" resultMap="findAllArticleMap">
+
+              SELECT
+	a.id AS aId,
+	a.title,
+	a.click_nums,
+	a.gmt_create,
+	a.user_id,
+	c.id as cId,
+	c.name,
+		(select count(id) from article_comment where article_comment.article_id=a.id) as comment
+FROM
+	article AS a
+	INNER JOIN `user` AS u ON a.user_id = u.id
+	INNER JOIN `article_category` AS c ON a.category_id = c.id
+WHERE
+    a.user_id=#{id}
+    and
+	a.is_show = 1
+	and
+	a.is_delete=0
+    </select>
+</mapper>

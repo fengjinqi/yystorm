@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yystorm.mapper.ArticleCommentMapper">
+    <resultMap id="selectListArticleCommentMap" type="com.yystorm.vo.ArticleCommentVO">
+        <id column="id" property="id"></id>
+        <result column="article_id" property="articleId"></result>
+        <result column="content" property="content"></result>
+        <collection property="user" ofType="com.yystorm.vo.UserVo">
+            <id column="Uid" property="id"/>
+            <result column="username" property="username"/>
+            <result column="user_img" property="userImg"/>
+        </collection>
+    </resultMap>
+    <select id="selectListArticleComment" resultMap="selectListArticleCommentMap">
+        SELECT a.*,u.username,u.id as Uid,u.user_img FROM article_comment as a
+LEFT JOIN
+`user` AS u
+ON u.id=a.user_id
+WHERE article_id=#{id}
+    </select>
+</mapper>
