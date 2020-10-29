@@ -38,7 +38,7 @@ public class ArticleVO implements Serializable {
 
     @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    private LocalDateTime gmtCreate;
+    private LocalDateTime gmtModified;
 
     @ApiModelProperty(value = "用户")
     private User user;

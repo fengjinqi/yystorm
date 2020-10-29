@@ -8,7 +8,7 @@
         <id column="aId" property="id"/>
         <result column="title" property="title"/>
         <result column="click_nums" property="clickNums"/>
-        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
         <result column="comment" property="articleCommentCount"/>
         <collection property="category" ofType="com.yystorm.entity.ArticleCategory">
             <id column="cId" property="id"/>
@@ -22,7 +22,7 @@
 	a.id AS aId,
 	a.title,
 	a.click_nums,
-	a.gmt_create,
+	a.gmt_modified,
 	a.user_id,
 	c.id as cId,
 	c.name,

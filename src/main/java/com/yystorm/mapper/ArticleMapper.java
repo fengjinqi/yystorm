@@ -39,6 +39,6 @@ public interface ArticleMapper extends BaseMapper<Article> {
     @Update("UPDATE article SET click_nums=click_nums+1 WHERE is_delete=0 and id=#{id}")
     void updateDetaileClickNums(String id);
 
-    @Select("SELECT article.id,article.list_pic,article.title FROM  article WHERE article.category_id=#{id} ORDER BY RAND() LIMIT 6")
+    @Select("SELECT article.id,article.list_pic,article.title,article.gmt_modified FROM  article WHERE article.category_id=#{id} ORDER BY RAND() LIMIT 6")
     List<Article> randomArticle(String id);
 }
