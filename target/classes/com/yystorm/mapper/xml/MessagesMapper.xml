@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yystorm.mapper.MessagesMapper">
+    <select id="getMessagesList" resultType="com.yystorm.vo.MessagesVO">
 
+        SELECT m.* ,
+IFNULL(ms.`status`,0) as isStatus
+FROM
+messages AS m
+LEFT JOIN
+messages_status as ms
+ON ms.message_id =m.id
+WHERE `enable`=0
+AND accept_id IN(#{id},0)
+AND(ms.id IS NULL OR ms.`status`=1)
+    </select>
 </mapper>

@@ -15,6 +15,17 @@ import java.util.List;
  * @since 2020-10-23
  */
 public interface ArticleCommentMapper extends BaseMapper<ArticleComment> {
-
+    /**
+     * 根据文章查询评论
+     * @param id
+     * @return
+     */
     List<ArticleCommentVO> selectListArticleComment(String id);
+
+    /**
+     * 我的评论
+     * @param id
+     * @return
+     */
+    List<ArticleCommentVO> selectMeListArticleComment(String id);
 }

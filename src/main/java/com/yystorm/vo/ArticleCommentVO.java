@@ -24,6 +24,14 @@ public class ArticleCommentVO implements Serializable {
 
     @ApiModelProperty(value = "评论内容")
     private String content;
+    @ApiModelProperty(value = "title")
+    private String title;
+    @ApiModelProperty(value = "info")
+    private String info;
+
+    @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private LocalDateTime gmtCreate;
 
 }
 

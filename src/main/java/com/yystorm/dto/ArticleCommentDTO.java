@@ -28,6 +28,11 @@ public class ArticleCommentDTO {
     private String articleId;
     @NotNull(message = "userId不能为空")
     private Integer userId;
+
+    private String title;
+
+    private Integer acceptId;
+
     @NotNull(message = "content不能为空")
     @Length(max = 140,message = "字数不能超过140字")
     private String content;

@@ -44,5 +44,17 @@ public interface UserService extends IService<User> {
      */
     IPage<ArticleVO> findAllArticle(Page<Article> page1, Integer id);
 
+    /**
+     * 个人中心
+     * @param usernameFromToken
+     * @return
+     */
     UserVo getUserInfos(String usernameFromToken);
+
+    /**
+     * 根据id查询用户
+     * @param id
+     * @return
+     */
+    UserVo selectOneId(String id);
 }

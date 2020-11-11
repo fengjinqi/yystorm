@@ -7,6 +7,7 @@ import com.yystorm.mapper.ArticleCommentMapper;
 import com.yystorm.service.ArticleCommentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yystorm.service.MessagesService;
+import com.yystorm.utils.MessageEnum;
 import com.yystorm.vo.ArticleCommentVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +42,11 @@ public class ArticleCommentServiceImpl extends ServiceImpl<ArticleCommentMapper,
         ArticleComment articleComment = new ArticleComment();
         BeanUtils.copyProperties(articleCommentDTO, articleComment);
         Messages messages = new Messages();
-        messages.setContent("你的文章被人评论了,快去看看吧！");
-        messages.setTitle("文章评论");
+        messages.setContent(String.format("你发布的%s文章被人评论了,快去看看吧！","<span>"+articleCommentDTO.getTitle()+"</span>"));
+        messages.setTitle(MessageEnum.COMMENT);
         messages.setContentId(articleComment.getArticleId());
-        messages.setAcceptId(articleComment.getUserId());
+        messages.setAcceptId(articleCommentDTO.getAcceptId());
+        messages.setCreateId(articleComment.getUserId());
         messagesService.createMessages(messages);
         return baseMapper.insert(articleComment);
     }
@@ -52,5 +54,15 @@ public class ArticleCommentServiceImpl extends ServiceImpl<ArticleCommentMapper,
     @Override
     public List<ArticleCommentVO> getArticleCommentId(String id) {
         return baseMapper.selectListArticleComment(id);
+    }
+
+    /**
+     * 我的评论
+     * @param id
+     * @return
+     */
+    @Override
+    public List<ArticleCommentVO> getMeCommentId(String id) {
+        return baseMapper.selectMeListArticleComment(id);
     }
 }

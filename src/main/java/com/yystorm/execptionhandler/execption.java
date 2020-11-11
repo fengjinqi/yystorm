@@ -22,7 +22,7 @@ public class execption {
     @ResponseBody
     public Result error(Exception e) {
         e.printStackTrace();
-        return Result.error().message("执行了全局异常"+e.getMessage());
+        return Result.error().code(500).message("执行了全局异常"+e.getMessage());
     }
 
     /**

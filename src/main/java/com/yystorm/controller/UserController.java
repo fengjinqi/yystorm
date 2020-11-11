@@ -8,9 +8,11 @@ import com.yystorm.dto.UserDTO;
 import com.yystorm.entity.Article;
 import com.yystorm.entity.User;
 import com.yystorm.handler.JwtToken;
+import com.yystorm.service.ArticleCommentService;
 import com.yystorm.service.UserService;
 import com.yystorm.utils.JwtUtils;
 import com.yystorm.utils.Result;
+import com.yystorm.vo.ArticleCommentVO;
 import com.yystorm.vo.ArticleVO;
 import com.yystorm.vo.UserVo;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 
@@ -37,6 +40,8 @@ public class UserController {
     private JwtUtils jwtUtils;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ArticleCommentService articleCommentService;
 
     /**
      * 获取当前用户信息
@@ -52,6 +57,18 @@ public class UserController {
 
 
         return Result.ok().data("data", user);
+    }
+
+    /**
+     * 查看其它用户
+     * @param id
+     * @return
+     */
+    @GetMapping("/info/{id}")
+    public Result getUserInfoId(@PathVariable("id") String id) {
+        UserVo userInfos = userService.selectOneId(id);
+
+        return Result.ok().data("data", userInfos);
     }
 
     /**
@@ -77,6 +94,13 @@ public class UserController {
 
     }
 
+    /**
+     * 我的文章
+     * @param page
+     * @param size
+     * @param httpServletRequest
+     * @return
+     */
     @JwtToken
     @GetMapping("/article")
     public Result findAllArticle(@RequestParam(value = "page", defaultValue = "1", required = false) int page,
@@ -85,6 +109,33 @@ public class UserController {
         Page<Article> page1 = new Page<>(page, size);
         IPage<ArticleVO> result = userService.findAllArticle(page1, user.getId());
         return Result.ok().data("data", result);
+    }
+
+    /**
+     * 其它用户的文章
+     * @param id
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/article/{id}")
+    public Result findAllArticle(@PathVariable("id")String id,@RequestParam(value = "page", defaultValue = "1", required = false) int page,
+                                 @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        Page<Article> page1 = new Page<>(page, size);
+        IPage<ArticleVO> result = userService.findAllArticle(page1, Integer.valueOf(id));
+        return Result.ok().data("data", result);
+    }
+    /**
+     * 我的评论
+     * @param httpServletRequest
+     * @return
+     */
+    @JwtToken
+    @GetMapping("/comment")
+    public Result findAllArticle( HttpServletRequest httpServletRequest) {
+        UserVo user = getUser(httpServletRequest);
+        List<ArticleCommentVO> meCommentId = articleCommentService.getMeCommentId(user.getId().toString());
+        return Result.ok().data("data", meCommentId);
     }
 
     /**

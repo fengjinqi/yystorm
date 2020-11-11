@@ -29,4 +29,11 @@ public interface ArticleCommentService extends IService<ArticleComment> {
      * @return
      */
     List<ArticleCommentVO> getArticleCommentId(String id);
+
+    /**
+     * 我的评论
+     * @param id
+     * @return
+     */
+    List<ArticleCommentVO> getMeCommentId(String id);
 }

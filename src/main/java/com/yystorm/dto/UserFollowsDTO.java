@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 public class UserFollowsDTO {
     @NotNull(message = "用户不能为空")
     private Integer userId;
+    private String username;
     @NotNull(message = "用户不能为空")
     private Integer followedUser;
 }

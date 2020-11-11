@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yystorm.dto.ArticleDTO;
+import com.yystorm.email.IMailService;
 import com.yystorm.entity.Article;
 import com.yystorm.execptionhandler.GuliException;
 import com.yystorm.handler.JwtToken;
@@ -37,15 +38,7 @@ public class ArticleController {
     @Autowired
     private ArticleMapper articleMapper;
 
-    /**
-     * 查询所有文章
-     *
-     * @return
-     */
-    @GetMapping
-    public Result findAllArticle() {
-        return Result.ok().data("data", articleService.findAllArticle());
-    }
+
 
     /**
      * 根据分类id 查询文章
@@ -59,8 +52,19 @@ public class ArticleController {
                                   @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
         if (StringUtils.isEmpty(categoryId)) return Result.error().message("参数不能为空");
         Page<Article> page1 = new Page<>(page, size);
-        IPage<ArticleDTO> e = articleService.getCategoryListMapper(page1, categoryId);
+        IPage<ArticleVO> e = articleService.getCategoryListMapper(page1, categoryId);
+
         return Result.ok().data("data", e);
+    }
+    @GetMapping("/search")
+    public Result getSearchList(@RequestParam("name") String name,
+                                  @RequestParam(value = "page", defaultValue = "1", required = false) int page,
+                                  @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        if (StringUtils.isEmpty(name)) return Result.error().message("参数不能为空");
+        Page<Article> page1 = new Page<>(page, size);
+        IPage<ArticleVO> listMapper = articleService.getSearchList(page1, name);
+
+        return Result.ok().data("data", listMapper);
     }
 
     /**

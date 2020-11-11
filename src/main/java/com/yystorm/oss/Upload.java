@@ -5,6 +5,7 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.Bucket;
 import com.aliyun.oss.model.PutObjectResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yystorm.execptionhandler.GuliException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -56,10 +58,22 @@ public class Upload {
         }
 
     }
-    public void deleteFile( String url) {
+    public void deleteFile( String url) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map map = objectMapper.readValue(url, Map.class);
+        String file = (String) map.get("file");
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
-        ossClient.deleteObject("yystorm",url);
+        try {
+
+            ossClient.deleteObject("yystorm",file);
+            ossClient.shutdown();
+        }catch (Exception e){
+            ossClient.shutdown();
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
     }
 
 }

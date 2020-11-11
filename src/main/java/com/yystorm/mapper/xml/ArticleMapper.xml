@@ -8,8 +8,8 @@
         <result column="content" property="content"/>
         <result column="gmt_modified" property="gmtModified"/>
         <result column="list_pic" property="listPic"/>
-
-        <collection property="user" ofType="user">
+		<result column="comment" property="articleCommentCount"/>
+<!--        <collection property="user" ofType="user">
             <id column="id" property="id"/>
             <result column="username" property="username"/>
             <result column="user_img" property="userImg"/>
@@ -17,32 +17,10 @@
         </collection>
         <collection property="category" column="category_id" ofType="com.yystorm.entity.ArticleCategory"
                     select="com.yystorm.mapper.ArticleCategoryMapper.findById">
-            <!--  <id column="id" property="id" />
-              <result column="name" property="name" />-->
-        </collection>
+            &lt;!&ndash;  <id column="id" property="id" />
+              <result column="name" property="name" />&ndash;&gt;
+        </collection>-->
     </resultMap>
-    <select id="findAll" resultMap="queryForListMap">
-      SELECT
-	a.id AS aId,
-	a.title,
-	a.click_nums,
-	a.category_id,
-	a.collection,
-	a.content,
-	a.list_pic,
-	a.gmt_modified,
-	a.user_id,
-	u.id,
-	u.user_img,
-	u.username
-FROM
-	article AS a
-	INNER JOIN `user` AS u ON a.user_id = u.id
-WHERE
-	a.is_show = 1
-		and
-	a.is_delete=0
-    </select>
 
     <resultMap id="queryForListMaps" type="com.yystorm.vo.ArticleVO">
         <id column="aId" property="id"/>
@@ -51,6 +29,7 @@ WHERE
         <result column="content" property="content"/>
         <result column="gmt_modified" property="gmtModified"/>
         <result column="list_pic" property="listPic"/>
+        <result column="is_show" property="isShow"/>
         <result column="comment" property="articleCommentCount"/>
         <result column="follow" property="followCount"/>
         <result column="fan" property="fansCount"/>
@@ -94,6 +73,7 @@ WHERE
 	a.is_show = 1
 	and
 	a.is_delete=0
+		ORDER BY gmt_modified DESC
     </select>
 
     <select id="selectOneById" resultMap="queryForListMaps">
@@ -124,5 +104,60 @@ WHERE
 	a.is_show = 1
 	and
 	a.is_delete=0
+    </select>
+
+	<select id="getSearchList" resultMap="queryForListMap">
+SELECT
+	a.id,
+	a.title,
+	a.click_nums,
+	a.gmt_modified,
+	(SELECT COUNT(id) FROM
+		article_comment
+	WHERE
+		article_comment.article_id = a.id
+	) AS `comment`
+FROM
+	article AS a
+WHERE
+	a.title LIKE CONCAT('%',#{name},'%')
+	AND a.is_show = 1
+	AND a.is_delete =0
+	ORDER BY gmt_modified DESC
+    </select>
+
+
+	<select id="getAdminListMapper" resultMap="queryForListMaps">
+              SELECT
+	a.id AS aId,
+	a.title,
+	a.click_nums,
+	a.category_id,
+	a.content,
+	a.list_pic,
+	a.gmt_modified,
+	a.user_id,
+	a.is_show,
+	u.id,
+	u.user_img,
+	u.username,
+	u.info,
+	c.id as cId,
+	c.name,
+	(select count(id) from article_comment where article_comment.article_id=a.id) as comment
+FROM
+	article AS a
+	INNER JOIN `user` AS u ON a.user_id = u.id
+	INNER JOIN `article_category` AS c ON a.category_id = c.id
+WHERE
+		a.is_delete=0
+		<if test="id != null and id !=''">
+			and a.category_id=#{id}
+		 </if>
+
+		<if test="name != null and name !=''">
+			and title like concat('%',#{name},'%')
+		</if>
+		ORDER BY gmt_modified DESC
     </select>
 </mapper>

@@ -51,6 +51,7 @@ public class Article implements Serializable {
 
     @ApiModelProperty(value = "创建时间")
     @TableField(value = "gmt_create",fill = FieldFill.INSERT)
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private LocalDateTime gmtCreate;
 
     @ApiModelProperty(value = "用户")

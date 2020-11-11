@@ -3,8 +3,10 @@ package com.yystorm.vo;
 import com.yystorm.entity.User;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class UserFollowsVO {
+public class UserFollowsVO implements Serializable {
     private Integer id;
 
     private Integer articleCount;

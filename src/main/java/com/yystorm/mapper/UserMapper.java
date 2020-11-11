@@ -26,6 +26,9 @@ public interface UserMapper extends BaseMapper<User> {
 
     IPage<ArticleVO> findAllArticle(Page<Article> page,@Param("id") Integer id);
 
-    @Select("select u.*,(select count(id) from user_follows where user_follows.user_id=u.id) as follow_count,(select count(id) from user_follows where user_follows.followed_user=u.id) as fans_count from user as u where openid=#{openid}")
+    @Select("select u.*,(select count(id) from user_follows where user_follows.user_id=u.id) as follow_count,(select count(id) from user_follows where user_follows.followed_user=u.id) as fans_count,(SELECT b.r_id FROM user_role as b WHERE b.u_id=u.id) as role from user as u where openid=#{openid} and is_delete=0")
     UserVo selectOnes(String openid);
+
+    @Select("select u.id,u.username,u.user_img,u.info,(select count(id) from user_follows where user_follows.user_id=u.id) as follow_count,(select count(id) from user_follows where user_follows.followed_user=u.id) as fans_count from user as u where id=#{openid} and is_delete=0")
+    UserVo selectOneId(String openid);
 }

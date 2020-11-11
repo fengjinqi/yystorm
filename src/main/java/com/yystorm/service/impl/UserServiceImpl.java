@@ -50,7 +50,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public int register(User user) {
         int insert = baseMapper.insert(user);
         if (insert > 0) {
-            userRoleService.createUserRole(user.getId(), 2);
+            userRoleService.createUserRole(user.getId(), 1);
         }
         return insert;
     }
@@ -87,10 +87,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     }
 
+    /**
+     * 个人中心
+     * @param usernameFromToken
+     * @return
+     */
     @Override
     public UserVo getUserInfos(String usernameFromToken) {
 
         return baseMapper.selectOnes(usernameFromToken);
+    }
+
+    @Override
+    public UserVo selectOneId(String id) {
+        return baseMapper.selectOneId(id);
     }
 
 

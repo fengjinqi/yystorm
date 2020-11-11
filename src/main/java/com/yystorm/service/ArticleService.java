@@ -3,6 +3,7 @@ package com.yystorm.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yystorm.dto.ArticleDTO;
+import com.yystorm.dto.ArticleIsSHowDTO;
 import com.yystorm.entity.Article;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yystorm.vo.ArticleVO;
@@ -26,7 +27,6 @@ public interface ArticleService extends IService<Article> {
      */
     Integer createArticle(ArticleDTO articleDTO);
 
-    List<Article> findAllArticle();
 
     /**
      * 根据分类查询文章
@@ -34,7 +34,7 @@ public interface ArticleService extends IService<Article> {
      * @param categoryId
      * @return
      */
-    IPage<ArticleDTO> getCategoryListMapper(Page<Article> page, String categoryId);
+    IPage<ArticleVO> getCategoryListMapper(Page<Article> page, String categoryId);
 
     /**
      * 热门文章
@@ -59,5 +59,34 @@ public interface ArticleService extends IService<Article> {
      */
     Integer updateArticle(ArticleDTO articleDTO);
 
+    /**
+     * 随机
+     * @param id
+     * @return
+     */
     List<Article> randomArticle(String id);
+
+    /**
+     * 模糊搜索
+     * @param page1
+     * @param name
+     * @return
+     */
+    IPage<ArticleVO> getSearchList(Page<Article> page1, String name);
+
+    /**
+     * 文章列表
+     * @param page1
+     * @param name
+     * @param categoryId
+     * @return
+     */
+    IPage<ArticleVO> getAdminListMapper(Page<Article> page1, String name, String categoryId);
+
+    /**
+     * 审核
+     * @param id
+     * @return
+     */
+    int updateByIdIsShow(ArticleIsSHowDTO id);
 }
